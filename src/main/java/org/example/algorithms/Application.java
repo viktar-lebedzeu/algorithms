@@ -1,6 +1,7 @@
 package org.example.algorithms;
 
 import org.apache.commons.lang3.StringUtils;
+import org.example.algorithms.aspect.LogMethodTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,5 +22,12 @@ public class Application {
         logger.info("This application is used for test purpose only.");
         logger.info("Please use unit tests instead. Quiting...");
         logger.debug(StringUtils.repeat("=", 50));
+        test();
+    }
+
+
+    @LogMethodTime
+    private static void test() {
+        logger.info("Inside the Application.test() method");
     }
 }
