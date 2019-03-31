@@ -16,20 +16,18 @@ public class LogMethodTimeAspect {
     /** Logger */
     private static final Logger logger = LoggerFactory.getLogger(LogMethodTimeAspect.class);
 
-    @Pointcut(value = "execution(* org.example.algorithms..*(..)) && @annotation(logMethodTime)")
-    public void logMethodTimePointcut(LogMethodTime logMethodTime) {
+    @Pointcut(value = "@annotation(LogMethodTime) && execution(* org.example.algorithms..*(..))")
+    public void logMethodTimeAnnotationPointcut() {
     }
 
-
-    @Around(value = "logMethodTimePointcut(LogMethodTime) && @annotation(LogMethodTime) && @annotation(logMethodTime)")
-    // @Around(value = "logMethodTimePointcut()")
-    public Object logMethodTime(ProceedingJoinPoint joinPoint, LogMethodTime logMethodTime) throws Throwable {
+    @Around(value = "@annotation(logMethodTime) && logMethodTimeAnnotationPointcut()")
+    public Object logMethodTime(final LogMethodTime logMethodTime, final ProceedingJoinPoint joinPoint) throws Throwable {
         long start = System.currentTimeMillis();
 
-        logger.debug("Entered into {} ", joinPoint.getSignature());
+        // logger.debug("Entered into {} ", joinPoint.getSignature());
 
-        Object[] args = joinPoint.getArgs();
-        logger.debug("Args: {} [{}]", args, args.length);
+        // Object[] args = joinPoint.getArgs();
+        // logger.debug("Args: {} [{}]", args, args.length);
 
         /*
         Object target = joinPoint.getTarget();
@@ -38,6 +36,7 @@ public class LogMethodTimeAspect {
         */
         Object proceed = joinPoint.proceed();
 
+        logger.debug("proceed = {}", proceed);
         long executionTime = System.currentTimeMillis() - start;
 
         logger.debug("{} executed in {}ms", joinPoint.getSignature(), executionTime);
