@@ -33,8 +33,12 @@ public class SumAlgorithmsTest {
         final List<SumResult<Integer>> results2 = SumAlgorithms.findTwoSumsIndexes2(nums, targetSum);
         long duration2 = System.currentTimeMillis() - start;
 
-        logger.debug("Durations ({}) - {} ({}) : {} ({})", nums.length,
-                results1.size(), duration1, results2.size(), duration2);
+        start = System.currentTimeMillis();
+        final List<SumResult<Integer>> results3 = SumAlgorithms.findTwoSumsIndexes3(nums, targetSum);
+        long duration3 = System.currentTimeMillis() - start;
+
+        logger.debug("Durations ({}) - {} ({}) : {} ({}) : {} ({})", nums.length,
+                results1.size(), duration1, results2.size(), duration2, results3.size(), duration3);
     }
 
     @Test
@@ -44,7 +48,11 @@ public class SumAlgorithmsTest {
         logger.debug("results : {}", results1);
         final List<SumResult<Integer>> results2 = SumAlgorithms.findTwoSumsIndexes2(nums, 6);
         logger.debug("results : {}", results2);
+        final List<SumResult<Integer>> results3 = SumAlgorithms.findTwoSumsIndexes3(nums, 6);
+        logger.debug("results : {}", results3);
         Assertions.assertEquals(results1, results2);
+        Assertions.assertEquals(results1, results3);
+        Assertions.assertEquals(results2, results3);
         Assertions.assertEquals(new SumResult<>(-2, 8), new SumResult<>(8, -2));
     }
 

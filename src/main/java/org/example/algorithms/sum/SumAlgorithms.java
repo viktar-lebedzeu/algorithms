@@ -53,6 +53,51 @@ public class SumAlgorithms {
     }
 
     @LogMethodTime
+    public static List<SumResult<Integer>> findTwoSumsIndexes3(@NotNull int[] nums, int targetSum) {
+        // logger.info("findTwoSumsIndexes3({}) : Searching", targetSum);
+        if (nums == null || nums.length < 2) {
+            logger.info("findTwoSumsIndexes3({}) : Nothing found", targetSum);
+            return new ArrayList<>(0);
+        }
+
+        LinkedHashSet<SumResult<Integer>> resultNums = new LinkedHashSet<>();
+        final List<Integer> numsList = Arrays.stream(nums).sorted().boxed().collect(Collectors.toList());
+        HashSet<Integer> usedNumbers = new HashSet<>();
+        int idx1 = 0;
+        int idx2 = numsList.size() - 1;
+        while (idx1 < idx2) {
+            Integer num1 = numsList.get(idx1);
+            Integer num2 = numsList.get(idx2);
+            if (usedNumbers.contains(num1)) {
+                idx1++;
+                continue;
+            }
+            if (usedNumbers.contains(num2)) {
+                idx2--;
+                continue;
+            }
+            Integer sum = num1 + num2;
+            if (sum.equals(targetSum)) {
+                idx1++;
+                idx2--;
+                usedNumbers.add(num1);
+                usedNumbers.add(num2);
+                resultNums.add(new SumResult<>(num1, num2));
+                continue;
+            }
+            if (sum < targetSum) {
+                idx1++;
+            } else {
+                idx2--;
+            }
+        }
+
+        // List<SumResult<Integer>> filteredResultNums = new ArrayList<>(new HashSet<>(resultNums));
+        // logger.debug("Found {} pairs (filtered : {})", resultNums.size(), filteredResultNums.size());
+        return new ArrayList<>(resultNums);
+    }
+
+    @LogMethodTime
     public static List<SumResult<Integer>> findTwoSumsIndexes2(@NotNull int[] nums, int targetSum) {
         // logger.info("findTwoSumsIndexes2({}) : Searching", targetSum);
         if (nums == null || nums.length < 2) {
