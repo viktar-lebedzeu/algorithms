@@ -1,4 +1,4 @@
-package org.example.algorithms.aspect;
+package org.example.algorithms.aop;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
