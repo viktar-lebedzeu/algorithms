@@ -22,12 +22,5 @@ public class Application {
         logger.info("This application is used for test purpose only.");
         logger.info("Please use unit tests instead. Quiting...");
         logger.debug(StringUtils.repeat("=", 50));
-        test();
-    }
-
-
-    @LogMethodTime
-    private static void test() {
-        logger.info("Inside the Application.test() method");
     }
 }

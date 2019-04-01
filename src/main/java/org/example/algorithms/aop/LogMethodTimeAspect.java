@@ -15,7 +15,9 @@ public class LogMethodTimeAspect {
     /** Logger */
     private static final Logger logger = LoggerFactory.getLogger(LogMethodTimeAspect.class);
 
-    @Pointcut(value = "@annotation(LogMethodTime) && execution(* org.example.algorithms..*(..))")
+    // @Pointcut(value = "@annotation(LogMethodTime)")
+    // @Pointcut(value = "@annotation(LogMethodTime) && execution(* org.example.algorithms..*(..))")
+    @Pointcut(value = "@annotation(LogMethodTime) && execution(* *(..))")
     public void logMethodTimeAnnotationPointcut() {
     }
 
@@ -35,7 +37,7 @@ public class LogMethodTimeAspect {
         */
         Object proceed = joinPoint.proceed();
 
-        logger.debug("proceed = {}", proceed);
+        logger.debug("proceed = {}", joinPoint.getSignature());
         long executionTime = System.currentTimeMillis() - start;
 
         logger.debug("{} executed in {}ms", joinPoint.getSignature(), executionTime);
