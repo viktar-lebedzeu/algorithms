@@ -9,7 +9,9 @@ import org.junit.jupiter.api.TestInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Test suite for checking features of SumAlgorithms class
@@ -37,8 +39,33 @@ public class SumAlgorithmsTest {
         final List<SumResult<Integer>> results3 = SumAlgorithms.findTwoSumsIndexes3(nums, targetSum);
         long duration3 = System.currentTimeMillis() - start;
 
-        logger.debug("Durations ({}) - {} ({}) : {} ({}) : {} ({})", nums.length,
-                results1.size(), duration1, results2.size(), duration2, results3.size(), duration3);
+        start = System.currentTimeMillis();
+        final List<SumResult<Integer>> results4 = SumAlgorithms.findSums(
+                Arrays.stream(nums).boxed().collect(Collectors.toList()), targetSum, 2);
+        long duration4 = System.currentTimeMillis() - start;
+
+/*
+        start = System.currentTimeMillis();
+        final List<SumResult<Integer>> results5 = SumAlgorithms.findSums(
+                Arrays.stream(nums).boxed().collect(Collectors.toList()), targetSum, 5);
+        long duration5 = System.currentTimeMillis() - start;
+*/
+
+        logger.debug("Durations ({}) - {} ({}) : {} ({}) : {} ({}) : {} ({})", nums.length,
+                results1.size(), duration1, results2.size(), duration2,
+                results3.size(), duration3, results4.size(), duration4);
+//        logger.debug("    --- 5 ({}) - {} ({})", nums.length, results5.size(), duration5);
+    }
+
+    @Test
+    public void testFindSumNumbers() {
+        List<Integer> list = Arrays.asList(6, 3, 2, 1, 1, 2, 3, 0, 4, 4, 4, 6);
+        List<SumResult<Integer>> sums1 = SumAlgorithms.findSums(list, 5, 3);
+        List<SumResult<Integer>> sums2 = SumAlgorithms.findSums(list, 5, 4);
+        List<SumResult<Integer>> sums3 = SumAlgorithms.findSums(list, 5, 5);
+        logger.debug("sums[1] : {}", sums1);
+        logger.debug("sums[2] : {}", sums2);
+        logger.debug("sums[3] : {}", sums3);
     }
 
     @Test
@@ -58,11 +85,11 @@ public class SumAlgorithmsTest {
 
     private static int[] generateNumbers(int repetition) {
         int arraySize = repetition * 10000;
-        int edgeValue = repetition * 250;
+        int edgeValue = repetition * 11000;
         int[] nums = new int[arraySize];
         for (int idx = 0; idx < arraySize; idx++) {
             int sign = RandomUtils.nextInt(0, 100);
-            nums[idx] = ((sign < 50) ? -1 : 1) * RandomUtils.nextInt(0, edgeValue);
+            nums[idx] = ((sign < 40) ? -1 : 1) * RandomUtils.nextInt(0, edgeValue);
         }
         return nums;
     }

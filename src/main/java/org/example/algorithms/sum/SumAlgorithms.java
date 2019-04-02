@@ -12,7 +12,8 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
+import java.util.ListIterator;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -117,10 +118,10 @@ public class SumAlgorithms {
 
         HashSet<Integer> usedKeys = new HashSet<>();
         for (Integer num : sortedKeys) {
-            if (usedKeys.contains(num)) {
+            Integer additionNum = targetSum - num;
+            if (usedKeys.contains(num) || num > targetSum || additionNum < num) {
                 break;
             }
-            Integer additionNum = targetSum - num;
 
             if (numberCountMap.containsKey(additionNum)
                     || (additionNum.equals(num) && (numberCountMap.get(num) > 1))) {
@@ -132,5 +133,87 @@ public class SumAlgorithms {
         }
 
         return resultNums;
+    }
+
+    public static List<SumResult<Integer>> findSums(List<Integer> nums, Integer targetSum, int depth) {
+        HashMap<Integer, Integer> numberCountMap = new HashMap<>();
+        nums.forEach(n -> {
+            Integer count = numberCountMap.containsKey(n) ? numberCountMap.get(n) + 1 : 1;
+            numberCountMap.put(n, count);
+        });
+        List<Integer> sortedKeys = numberCountMap.keySet().stream().sorted().collect(Collectors.toList());
+
+        return findSumNumbers(depth, sortedKeys, targetSum, numberCountMap);
+    }
+
+    /**
+     *
+     * @param depth
+     * @param sortedNums
+     * @param targetSum
+     * @param numberCountMap
+     * @return
+     */
+    private static List<SumResult<Integer>> findSumNumbers(
+            int depth, @NotNull final List<Integer> sortedNums, @NotNull Integer targetSum,
+            @NotNull Map<Integer, Integer> numberCountMap) {
+
+        // checking for the wrong parameters
+        if (depth < 2
+                || sortedNums == null || sortedNums.isEmpty() || (sortedNums.size() < depth)
+                || numberCountMap == null) {
+            return new ArrayList<>(0);
+        }
+
+        LinkedList<SumResult<Integer>> resultList = new LinkedList<>();
+        HashSet<SumResult> resultSet = new HashSet<>();
+        HashSet<Integer> usedKeys = new HashSet<>();
+
+        ListIterator<Integer> iterator = sortedNums.listIterator();
+        int idx = 1;
+        while (iterator.hasNext()) {
+            Integer num = iterator.next();
+            Integer additionNum = targetSum - num;
+            if (usedKeys.contains(num) || num > targetSum || additionNum < num) {
+                break;
+            }
+            if (depth > 2) {
+                usedKeys.add(num);
+                List<Integer> nextList;
+                Map<Integer, Integer> nextMap = new HashMap<>(numberCountMap);
+                Integer count = numberCountMap.get(num);
+                if (count > 1) {
+                    nextList = sortedNums.subList(idx - 1, sortedNums.size());
+                    nextMap.put(num, count -1);
+                } else {
+                    nextList = sortedNums.subList(idx, sortedNums.size());
+                    nextMap.remove(num);
+                }
+
+                // calling this method recursively
+                List<SumResult<Integer>> sumNumbers = findSumNumbers(depth - 1, nextList, additionNum, nextMap);
+                if (!sumNumbers.isEmpty()) {
+                    SumResult<Integer> sum = new SumResult<>(num);
+                    sumNumbers.forEach(e -> {
+                        SumResult<Integer> res = sum.add(e);
+                        if (!resultSet.contains(res)) {
+                            resultSet.add(res);
+                            resultList.add(res);
+                        }
+                    });
+                }
+
+            } else {
+                if (numberCountMap.containsKey(additionNum)
+                        || (additionNum.equals(num) && (numberCountMap.get(num) > 1))) {
+
+                    usedKeys.add(num);
+                    usedKeys.add(additionNum);
+                    resultList.add(new SumResult<>(num, additionNum));
+                }
+            }
+            idx++;
+        }
+        return resultList;
     }
 }
